@@ -10,3 +10,5 @@ output:
 ---
 
 # Prefácio {-}
+
+Aqui nós testamos a atualização por meio do GitHub.
