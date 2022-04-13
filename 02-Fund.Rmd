@@ -1,2 +1,33 @@
-# Fundamentação estatística
+```{r, include=FALSE}
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+```
 
+# Fundamentação estatística para normas baseadas em regressão
+
+## Dificuldades em estabelecer medidas em Psicologia
+
+Na Física e nas demais ciências naturais, uma *medida* é definida pelo produto de uma *magnitude* de um atributo quantitativo com uma unidade fundamental de referência. É crucial que a relação entre diferentes magnitudes, como proposta por equações de modelos científicos, seja independente da unidade fundamental utilizada para expressar a medida. Essa *invariância* com relação à unidade de referência utilizada para expressar uma medida só é possível quando a operacionalização do processo de mensuração do atributo quantitativo resultar em valores que permitam a operação de divisão, i.e., ser possível e significativo calcular *razões* entre duas medidas.
+
+Nas Psicologia, via de regra, esse nível de mensuração não costuma ser proposto ou mesmo tentado. Em seu lugar, a Psicologia aceitou amplamente a noção *operacionalista* de mensuração, na qual um atributo quantitativo é definido pelo processo estipulado para sua mensuração. Nesse contexto, uma medida é simplesmente um conjunto de regras que permite atribuir valores numéricos a atributos, independente de sua natureza. Apesar de o operacionalismo permitir ampliar a noção de medida e justificar *a priori* a possibilidade de mensuração de qualquer construto psicológico, os valores numéricos obtidos pela aplicação de regras arbitrárias de mensuração não mantém a estrutura matemática necessária para a realização de operações básicas. Dessa forma, não é possível estabelecer razões entre diferentes medidas e, portanto, não faz sentido tentar estabelecer uma unidade fundamental de referência.
+
+## O papel das normas estatísticas
+
+Mas nem tudo está perdido para as mensurações possíveis de serem obtidas por meio de instrumentos psicológicos. Na ausência de uma unidade fundamental de referência que dê sentido às magnitudes obtidas, a Psicologia propõe a comparação dos valores obtidos por um sujeito numa determinada medida definida por um instrumento psicológico à *distribuição de probabilidade* dessa medida em uma população de referência, chamada de *população normativa*. A Psicologia substitui, então, a necessidade de uma unidade de medida por um critério estatístico de comparação, permitindo pelo menos o ordenamento de diferentes sujeitos com relação ao atributo de interesse (ou, mais especificamente, aos valores obtidos pelo processo de mensuração associado a um construto postulado).
+
+Essa comparação da medida de um sujeito à população normativa pode ser expressa de diversas maneiras, mas, a título de generalidade, vamos supor que o ordenamento permita, minimamente, estabelecer o *percentil* ao qual o sujeito avaliado pertence. O *percentil* é definido como a probalidade (aqui também possível de ser entendida como proporção) de uma variável aleatória *X* ser inferior ou igual a um valor fixo *x*.
+
+$$\mathrm{Percentil}(x) = \mathrm{Pr}(X \leq x)$$
+
+Em uma situação ideal, de conseguimos observar todos os valores de um população normativa finita, e supondo que o processo de mensuração atribua números pertencentes a um conjunto ordenado e finito (ou pelo menos contável), a distribuição de probabilidade de referência pode ser expressa como um histograma e o percentil de um sujeito pode ser facilmenta computado calculando a proporção entre os casos com valores menores ou iguais ao valor observado e o tamanho total da população.
+
+Por exemplo: supondo que a população normativa possua 700 pessoas e o processo de mensuração resulte em números inteiros dentro do intervalo [1, 5] com a seguinte distribuição de frequência:
+
+```{r}
+samp_data <- data.frame(Valor=1:5,
+                        Frequência=c(60, 150, 260, 190, 40))
+kable(samp_data, booktabs=T, caption='Histograma de frequência dos valores numa população finita')
+```
+
+Nesse exemplo simples, há apenas cinco valores possíveis para os percentis: quem obtém escore igual a um pertence ao percentil 8,6% ($\frac{60}{700}$); quem obtém escore igual a dois pertence ao percentil 30% ($\frac{60 + 150}{700}$); quem obtém escore igual a três pertence ao percentil 67,1% ($\frac{60 + 150 + 260}{700}$); quem obtém escore igual a quatro pertence ao percentil 94,3% ($\frac{60 + 150 + 260 + 190}{700}$); e, por fim, quem obtém escore igual a cinco pertence ao percentil 100% ($\frac{60 + 150 + 260 + 190 + 40}{700}$).
