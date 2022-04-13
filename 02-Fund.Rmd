@@ -20,9 +20,16 @@ Essa comparação da medida de um sujeito à população normativa pode ser expr
 
 $$\mathrm{Percentil}(x) = \mathrm{Pr}(X \leq x)$$
 
-Em uma situação ideal, de conseguimos observar todos os valores de um população normativa finita, e supondo que o processo de mensuração atribua números pertencentes a um conjunto ordenado e finito (ou pelo menos contável), a distribuição de probabilidade de referência pode ser expressa como um histograma e o percentil de um sujeito pode ser facilmenta computado calculando a proporção entre os casos com valores menores ou iguais ao valor observado e o tamanho total da população.
+Em uma situação ideal, se conseguimos observar todos os valores de um população normativa finita, e supondo que o processo de mensuração atribua números pertencentes a um conjunto ordenado e finito (ou pelo menos contável), a distribuição de probabilidade de referência pode ser expressa como um histograma e o percentil de um sujeito pode ser facilmente computado calculando a proporção entre os casos com valores menores ou iguais ao valor observado e o tamanho total da população.
 
-Por exemplo: supondo que a população normativa possua 700 pessoas e o processo de mensuração resulte em números inteiros dentro do intervalo [1, 5] com a seguinte distribuição de frequência:
+:::: {.examplebox data-latex=""}
+::: {.center data-latex=""}
+
+**Exemplo**
+
+:::
+
+Um item com enunciado "Eu me sinto disposto ao acordar" é avaliado em uma escala ordinal com cinco alternativas ordenadas -- "Discordo Fortemete, "Discordo", "Nem concordo, nem discordo", "Concordo", "Concordo Fortemente" -- codificados como números inteiros dentro do intervalo [1, 5]. Vamos supor que a população normativa possua 700 pessoas e o item tenha sido aplicado em todos os sujeitos, resultando na seguinte distribuição de frequência:
 
 ```{r}
 samp_data <- data.frame(Valor=1:5,
@@ -30,4 +37,14 @@ samp_data <- data.frame(Valor=1:5,
 kable(samp_data, booktabs=T, caption='Histograma de frequência dos valores numa população finita')
 ```
 
-Nesse exemplo simples, há apenas cinco valores possíveis para os percentis: quem obtém escore igual a um pertence ao percentil 8,6% ($\frac{60}{700}$); quem obtém escore igual a dois pertence ao percentil 30% ($\frac{60 + 150}{700}$); quem obtém escore igual a três pertence ao percentil 67,1% ($\frac{60 + 150 + 260}{700}$); quem obtém escore igual a quatro pertence ao percentil 94,3% ($\frac{60 + 150 + 260 + 190}{700}$); e, por fim, quem obtém escore igual a cinco pertence ao percentil 100% ($\frac{60 + 150 + 260 + 190 + 40}{700}$).
+Nesse exemplo idealizado, há apenas cinco valores possíveis para os percentis: quem obtém escore igual a um pertence ao percentil 8,6% ($\frac{60}{700}$); quem obtém escore igual a dois pertence ao percentil 30% ($\frac{60 + 150}{700}$); quem obtém escore igual a três pertence ao percentil 67,1% ($\frac{60 + 150 + 260}{700}$); quem obtém escore igual a quatro pertence ao percentil 94,3% ($\frac{60 + 150 + 260 + 190}{700}$); e, por fim, quem obtém escore igual a cinco pertence ao percentil 100% ($\frac{60 + 150 + 260 + 190 + 40}{700}$).
+
+O uso do percentil como medida de comparação entre a resposta de um sujeito e a população normativa também pode ser visualizado graficamente por meio de um histograma. Na figura abaixo, um sujeito que escolheu a alternativa "Concordo", codificada com valor quatro, tem sua posição com relação à população identificada por meio da linha vertical tracejada. Toda a população que escolheu um valor igual ou menor desse sujeito está representada pelas barras em cor azul; o restante da população está representada pela barra em cor vermelha. O percentil é computado pela soma do número de respondentes em cada barra em cor azul dividida pelo tamanho totalda população.
+
+```{r, fig.align='center', fig.cap='Histograma de Frequência de respostas na população'}
+ggplot(samp_data, aes(x=Valor, y=Frequência)) +
+  geom_bar(stat='identity', fill=ifelse(samp_data$Valor <= 4, 'steelblue', 'maroon')) +
+  geom_vline(xintercept=4, linetype=2)
+```
+
+::::
