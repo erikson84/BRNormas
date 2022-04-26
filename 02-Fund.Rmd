@@ -1,5 +1,6 @@
 ```{r, include=FALSE}
 library(ggplot2)
+library(gridExtra)
 library(knitr)
 library(kableExtra)
 ```
@@ -14,9 +15,9 @@ Nas Psicologia, via de regra, esse nível de mensuração não costuma ser propo
 
 ## O papel das normas estatísticas
 
-Mas nem tudo está perdido para as mensurações possíveis de serem obtidas por meio de instrumentos psicológicos. Na ausência de uma unidade fundamental de referência que dê sentido às magnitudes obtidas, a Psicologia propõe a comparação dos valores obtidos por um sujeito numa determinada medida definida por um instrumento psicológico à *distribuição de probabilidade* dessa medida em uma população de referência, chamada de *população normativa*. A Psicologia substitui, então, a necessidade de uma unidade de medida por um critério estatístico de comparação, permitindo pelo menos o ordenamento de diferentes sujeitos com relação ao atributo de interesse (ou, mais especificamente, aos valores obtidos pelo processo de mensuração associado a um construto postulado).
+Mas nem tudo está perdido para as mensurações possíveis de serem obtidas por meio de instrumentos psicológicos. Na ausência de uma unidade fundamental de referência que dê sentido às magnitudes obtidas, a Psicologia propõe a comparação dos valores resultantes da avaliação de um sujeito numa determinada medida definida por um instrumento psicológico à *distribuição de probabilidade* dessa medida em uma população de referência, chamada de *população normativa*. A Psicologia substitui, então, a necessidade de uma unidade de medida por um critério estatístico de comparação, permitindo pelo menos o ordenamento de diferentes sujeitos com relação ao atributo de interesse (ou, mais especificamente, aos valores obtidos pelo processo de mensuração associado a um construto postulado).
 
-Essa comparação da medida de um sujeito à população normativa pode ser expressa de diversas maneiras, mas, a título de generalidade, vamos supor que o ordenamento permita, minimamente, estabelecer o *percentil* ao qual o sujeito avaliado pertence. O *percentil* é definido como a probalidade (aqui também possível de ser entendida como proporção) de uma variável aleatória *X* ser inferior ou igual a um valor fixo *x*.
+Essa comparação da medida de um sujeito à população normativa pode ser expressa de diversas maneiras, mas, a título de generalidade, vamos supor que o ordenamento permita, minimamente, estabelecer o *percentil* ao qual o sujeito avaliado pertence. O *percentil* é definido como a probabilidade (aqui também possível de ser entendida como proporção) de uma variável aleatória *X* ser inferior ou igual a um valor fixo *x*.
 
 $$\mathrm{Percentil}(x) = \mathrm{Pr}(X \leq x)$$
 
@@ -29,7 +30,7 @@ Em uma situação ideal, se conseguimos observar todos os valores de um populaç
 
 :::
 
-Um item com enunciado "Eu me sinto disposto ao acordar" é avaliado em uma escala ordinal com cinco alternativas ordenadas -- "Discordo Fortemete, "Discordo", "Nem concordo, nem discordo", "Concordo", "Concordo Fortemente" -- codificados como números inteiros dentro do intervalo [1, 5]. Vamos supor que a população normativa possua 700 pessoas e o item tenha sido aplicado em todos os sujeitos, resultando na seguinte distribuição de frequência:
+Um item com enunciado "Eu me sinto disposto ao acordar" é avaliado em uma escala ordinal com cinco alternativas ordenadas -- "Discordo Fortemente, "Discordo", "Nem concordo, nem discordo", "Concordo", "Concordo Fortemente" -- codificados como números inteiros dentro do intervalo [1, 5]. Vamos supor que a população normativa possua 700 pessoas e o item tenha sido aplicado em todos os sujeitos, resultando na seguinte distribuição de frequência:
 
 ```{r}
 samp_data <- data.frame(Valor=1:5,
@@ -39,7 +40,7 @@ kable(samp_data, booktabs=T, caption='Histograma de frequência dos valores numa
 
 Nesse exemplo idealizado, há apenas cinco valores possíveis para os percentis: quem obtém escore igual a um pertence ao percentil 8,6% ($\frac{60}{700}$); quem obtém escore igual a dois pertence ao percentil 30% ($\frac{60 + 150}{700}$); quem obtém escore igual a três pertence ao percentil 67,1% ($\frac{60 + 150 + 260}{700}$); quem obtém escore igual a quatro pertence ao percentil 94,3% ($\frac{60 + 150 + 260 + 190}{700}$); e, por fim, quem obtém escore igual a cinco pertence ao percentil 100% ($\frac{60 + 150 + 260 + 190 + 40}{700}$).
 
-O uso do percentil como medida de comparação entre a resposta de um sujeito e a população normativa também pode ser visualizado graficamente por meio de um histograma. Na figura abaixo, um sujeito que escolheu a alternativa "Concordo", codificada com valor quatro, tem sua posição com relação à população identificada por meio da linha vertical tracejada. Toda a população que escolheu um valor igual ou menor desse sujeito está representada pelas barras em cor azul; o restante da população está representada pela barra em cor vermelha. O percentil é computado pela soma do número de respondentes em cada barra em cor azul dividida pelo tamanho totalda população.
+O uso do percentil como medida de comparação entre a resposta de um sujeito e a população normativa também pode ser visualizado graficamente por meio de um histograma. Na figura abaixo, um sujeito que escolheu a alternativa "Concordo", codificada com valor quatro, tem sua posição com relação à população identificada por meio da linha vertical tracejada. Toda a população que escolheu um valor igual ou menor desse sujeito está representada pelas barras em cor azul; o restante da população está representada pela barra em cor vermelha. O percentil é computado pela soma do número de respondentes em cada barra em cor azul dividida pelo tamanho total da população.
 
 ```{r, fig.align='center', fig.cap='Histograma de Frequência de respostas na população'}
 ggplot(samp_data, aes(x=Valor, y=Frequência)) +
@@ -48,3 +49,56 @@ ggplot(samp_data, aes(x=Valor, y=Frequência)) +
 ```
 
 ::::
+
+## Dois desafios: aproximação e estimação
+
+Para muitas medidas -- especialmente aquelas derivadas da soma ou média de diversos itens de um instrumento -- o número resultante da operação de mensuração pode variar em muitos níveis e, mesmo que esse níveis sejam finitos e não estritamente contínuos, podemos tratar a medida como propriamente contínua. Mesmo que, teoricamente, algum instrumento pudesse produzir resultados contínuos, o fato de as populações serem invariavelmente finitas implica que só um número finito de possibilidades podem ser efetivamente observado. Ainda assim, pode ser frutífero considerar a medida como contínua e avaliar seu percentil a partir de uma função de distribuição acumulada.
+
+O desafio de suavizar a função de distribuição acumulada de uma população finita -- supondo que ela pode ser observada por completo -- traz um primeiro desafio de como melhor *aproximar* uma distribuição descontínua por uma função contínua. Essa questão, todavia, torna-se secundária quando é impossível observar a população normativa por completo -- o que é mais comumente a regra do que a exceção. Nesse caso, o segundo e principal desafio é como *estimar* a função de distribuição acumulada tendo acesso exclusivamente a uma amostra da população normativa.
+
+Ambos os desafios costumam ser resolvidos de uma só vez por meio da adoção de um *modelo* estatístico para descrever a população. Mesmo que a população e os valores produzidos pelo processo de mensuração sejam finitos, a população é modelada por uma função de distribuição de probabilidade com suporte contínuo. Tradicionalmente, é escolhida uma função de probabilidade que pode ser descrita por um número finito de parâmetros; em particular, a distribuição Gaussiana ou Normal, indexada apenas pelos parâmetros de média e variância, é comumente empregada para descrever a população e indicar os parâmetros de interesse para obtenção da função de distribuição acumulada^[A literatura estatística apresenta alternativas variadas para a aproximação da função de distribuição acumulada, desde o uso da distribuição acumulada empírica para os valores obtidos para a amostra -- que pode ser bastante ruidoso, especialmente nas caudas -- até estratégia de suavização não-paramétricas baseadas em *kernels* gaussianos ou em processos de Dirichlet. Como meio caminho existe a possibilidade de utilizar formas funcionais de famílias paramétricas, supondo que a família representa adequadamente a distribuição da população.].
+
+:::: {.examplebox data-latex=""}
+::: {.center data-latex=""}
+
+**Exemplo**
+
+:::
+
+Um teste de inteligência geral com 20 itens é aplicado em uma população de 500 estudantes. Por definição, os escores derivados deste teste são discretos: somente 21 valores são possíveis. Além disso, a própria população de referência é finita, formada por 500 pessoas. A função de distribuição cumulativa, calculada de forma empírica para todas as observações e suavizadas pela aproximação gaussiana, é apresentada na Figura 2. É importante destacar que a utilização da aproximação Gaussiana nesse caso cumpre exclusivamente a função de *aproximação* e *suavização* da função empírica.
+
+A figura também apresenta três estimativas dessa função de distribuição acumulada com base em amostras aleatórias simples de 30 sujeitos dessa população. Nesse caso, a aproximação Gaussiana cumpre o duplo papel mencionado acima: simultaneamente, ela permite *aproximar* a distribuição da população e facilita a *estimação* da função populacional por meio das estatísticas calculadas a partir da amostra.
+
+```{r, fig.cap='Distribuição acumulada dos escores de QI na população e em três amostras aleatórias'}
+pop_data <- round(rnorm(500, 10, 2))
+
+plot_pop <- ggplot(data.frame(QI=pop_data), aes(x=QI)) + stat_ecdf(aes(color='Dist. Emp.')) + 
+  geom_function(fun=function(x) pnorm(x+0.5, mean(pop_data), sd(pop_data)), aes(color='Suav. Gaussiana')) +
+  labs(y='Pr(QI <= x)', color='Legenda') + 
+  scale_color_manual(values=c('Dist. Emp.'='steelblue', 'Suav. Gaussiana'='maroon'))
+
+plot_list <- list(pop=plot_pop)
+
+for (pl in c('samp1', 'samp2', 'samp3')) {
+  samp <- sample(pop_data, 30)
+
+  plot_samp <- ggplot(data.frame(QI=samp), aes(x=QI)) + stat_ecdf(color='steelblue') + 
+    geom_function(fun=function(x) pnorm(x+0.5, mean(samp), sd(samp)), color='maroon') +
+    geom_function(fun=function(x) pnorm(x+0.5, mean(pop_data), sd(pop_data)), color='black', linetype=2) +
+    labs(y='Pr(QI <= x)') + theme(legend.position = 'none') + xlim(3, 16)
+  
+  plot_list[[pl]] <- plot_samp
+
+}
+
+grid.arrange(grobs=plot_list, layout_matrix=rbind(c(1, 1, 1), c(2, 3, 4)))
+
+
+```
+Qual a vantagem de utilizar a aproximação Gaussiana neste exemplo? Para os dados da população completa, a vantagem é meramente de compressão de dados: em vez de armazenar 500 observações, podemos obter a mesma precisão com apenas dois números: a média e a variância -- assumindo, é claro, que a forma funcional é adequada para aproximar a distribuição da população.
+
+No caso de utilizar a aproximação Gaussiana para facilitar a estimação da função de distribuição acumulada, há uma segunda vantagem -- também condicional à boa aproximação da forma funcional pela distribuição Normal: o erro no percentil obtido a partir da aproximação normal será menor do que o percentil obtido pela função de distribuição acumulada empírica, especialmente para amostras menores. Isso fica evidente nos gráficos acima: a curva estimada pela aproximação Gaussiana (em vermelho escuro) coincide com a curva baseada nos parâmetros populacionais (em preto tracejado); a aproximação por meio da função de distribuição acumulada empírica (em azul) apresenta maior variação e, portanto, maior erro.
+
+::::
+
+
