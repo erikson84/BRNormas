@@ -81,9 +81,10 @@ plot_list <- list(pop=plot_pop)
 
 for (pl in c('samp1', 'samp2', 'samp3')) {
   samp <- sample(pop_data, 30)
-
-  plot_samp <- ggplot(data.frame(QI=samp), aes(x=QI)) + stat_ecdf(color='steelblue') + 
-    geom_function(fun=function(x) pnorm(x+0.5, mean(samp), sd(samp)), color='maroon') +
+  plot_df <- data.frame(QI=samp)
+  plot_samp <- ggplot(plot_df, aes(x=QI)) + stat_ecdf(color='steelblue') + 
+    geom_line(data=data.frame(x=seq(4, 16, length.out=100), y=pnorm(seq(4, 16, length.out=100), mean(samp), sd(samp))),
+              aes(x=x, y=y), color='maroon') + 
     geom_function(fun=function(x) pnorm(x+0.5, mean(pop_data), sd(pop_data)), color='black', linetype=2) +
     labs(y='Pr(QI <= x)') + theme(legend.position = 'none') + xlim(3, 16)
   
@@ -97,8 +98,27 @@ grid.arrange(grobs=plot_list, layout_matrix=rbind(c(1, 1, 1), c(2, 3, 4)))
 ```
 Qual a vantagem de utilizar a aproximação Gaussiana neste exemplo? Para os dados da população completa, a vantagem é meramente de compressão de dados: em vez de armazenar 500 observações, podemos obter a mesma precisão com apenas dois números: a média e a variância -- assumindo, é claro, que a forma funcional é adequada para aproximar a distribuição da população.
 
-No caso de utilizar a aproximação Gaussiana para facilitar a estimação da função de distribuição acumulada, há uma segunda vantagem -- também condicional à boa aproximação da forma funcional pela distribuição Normal: o erro no percentil obtido a partir da aproximação normal será menor do que o percentil obtido pela função de distribuição acumulada empírica, especialmente para amostras menores. Isso fica evidente nos gráficos acima: a curva estimada pela aproximação Gaussiana (em vermelho escuro) coincide com a curva baseada nos parâmetros populacionais (em preto tracejado); a aproximação por meio da função de distribuição acumulada empírica (em azul) apresenta maior variação e, portanto, maior erro.
+No caso de utilizar a aproximação Gaussiana para facilitar a estimação da função de distribuição acumulada, há uma segunda vantagem -- também condicional à boa aproximação da forma funcional pela distribuição Normal: o erro no percentil obtido a partir da aproximação normal será menor do que o percentil obtido pela função de distribuição acumulada empírica, especialmente para amostras menores. Isso fica evidente nos gráficos acima: a curva estimada pela aproximação Gaussiana (em vermelho escuro) se aproxima da curva baseada nos parâmetros populacionais (em preto tracejado); a aproximação por meio da função de distribuição acumulada empírica (em azul) apresenta maior variação e, portanto, maior erro.
 
 ::::
+
+## Populações heterogêneas
+
+Se a população normativa de um escala psicológica é relativamente homogênea ou se o atributo mensurado não varia sistematicamente em função de outras variáveis, uma única tabela normatiza é suficiente. Porém, esse nível de homogeneidade raramente é observado para variáveis psicológicas: elas são afetadas por diversos fatores com diferentes graus de sistematicidade. Nesses casos, uma única referência normativa pode ser inadequada, a depender dos objetivos propostos para a avaliação.
+
+No caso de populações heterogêneas, precisamos identificar as fontes relevantes de variação e elaborar uma tabela normativa para cada nível pertinente dessas fontes. Em outras palavras, precisamos encontrar a *função de distribuição acumulada condicional* da medida de interesse em função dos diferentes valores das variáveis influenciadoras.
+
+$$\mathrm{FDA}(x \mid Y=y, \dots, Z=z) = \mathrm{Pr}(X \leq x \mid Y=y, \dots, Z=z)$$
+A maioria dos testes psicológicos elege um pequeno número de variáveis sociodemográficas consideradas relevantes e elabora uma tabela normativa para cada um dos níveis dessas variáveis, geralmente de forma separada (i.e.: sem considerar o efeito da interação de níveis dos preditores). Apesar de ser um avanço sobre a apresentação de uma única tabela normativa, as limitações desse procedimento são óbvias:
+
+1. Só é possível escolher variáveis discretas ou discretizar em classes amplas variáveis contínuas; 
+2. É difícil considerar como condicionante mais de uma variável por vez, levando a construção de tabelas, p.ex., para gênero ou escolaridade mas não para gênero e escolaridade simultaneamente; 
+3. O cálculo dos valores dessa tabela, se feito de forma exclusivamente empírica, subdividindo a amostra de acordo com os níveis das variáveis condicionantes, terá um número menor de pontos de dados e será mais ruidoso.
+
+De maneira geral, o problema estatístico de estimar valores para um *desfecho* de interesse (em nosso caso, uma medida psicológica), que passaremos a representar como *y*, em função dos valores condicionais de um ou mais *preditores* (como variáveis sociodemográficas ou outras pertinentes ao atributo avaliado), que representaremos pelo vetor **x**, é endereçado pelos modelos de *regressão*. A maioria dos modelos de regressão buscar estimar o valor esperado do desfecho condicionado nos níveis observados dos preditores. Em particular, os modelos de *regressão linear* tentam aproximar essa função pela combinação aditiva dos preditores, ponderados por coeficientes de inclinação ($\boldsymbol{\beta}$, na equação abaixo).
+
+$$\mathbb{E}(y_i\mid\textbf{x}_i, \boldsymbol{\beta})=\alpha + \beta_1x_{i1}+\dots+\beta_kx_{ik}$$
+
+
 
 
