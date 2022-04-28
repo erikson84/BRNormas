@@ -119,6 +119,16 @@ De maneira geral, o problema estatístico de estimar valores para um *desfecho* 
 
 $$\mathbb{E}(y_i\mid\textbf{x}_i, \boldsymbol{\beta})=\alpha + \beta_1x_{i1}+\dots+\beta_kx_{ik}$$
 
+### Regressão linear
 
+Via de regra, a distribuição condicional de probabilidade $p(y\mid\boldsymbol{x})$ não é conhecida e as dependências entre a variável alvo e as variáveis condicionantes podem ser mais complexas do que é possível capturar com um modelo estatístico paramétrico. Mesmo assim, uma aproximação inicial pode ser obtida se for plausível assumir algumas simplificações:
 
+1. A variação média de um desfecho em função da variação de um preditor é constante e não depende do valor específico do preditor -- esse pressuposto implica na *linearidade* da relação entre desfecho e preditores, e pode ser flexibilizado pelo acréscimo de polinômios dos preditores com relação não-linear;
+2. A maneira como um preditor influencia o desfecho não depende dos valores dos outros preditores -- esse pressuposto implica da *aditividade* dos preditores, e pode ser flexibilizado pelo acréscimo de combinações (*interações*) entre preditores com influência mútua;
+3. Os valores mensurados para os preditores não possuem erro e podem ser tratados como fixos, ou, minimamente, os erros nos preditores podem ser desprezados sem consequência para as predições -- esse pressuposto de *exogeneidade fraca* implica que não precisamos considerar o modelo da distribuição conjunta de todas as variáveis;
+4. A maneira como o valor observado difere do valor esperado predito pelo modelo -- os *erros* -- não depende nem do valor predito nem dos valores específicos dos preditores -- esse pressuposto determina a *independência dos erros* e não pode ser flexibilizado sem mudar fundamentalmente a estrutura do modelo (transformando-o, p.ex., em um modelo hierárquico para dar conta de dependência de erros entre grupos);
+5. A variância dos erros é constante para qualquer valor predito e independe dos valores do preditores -- esse pressuposto implica na *homogeneidade da variância* dos erros do modelo e é assumido por algoritmos tradicionais, como mínimos quadrados e máxima verossimilhança, mas pode ser flexibilizado utilizando mínimos quadrados ponderados ou estimadores robustos para a Hessiana do modelo de máxima verossimilhança;
+6. A *distribuição dos erros* segue uma função de densidade gaussiana -- esse pressuposto assume a *normalidade dos erros* e só é necessário porque nossa tarefa envolve calcular a função de distribuição acumulada para avaliar os percentis normativos e não é, de forma alguma, um pressuposto para a regressão linear para fins de predição do valor esperado do desfecho.
+
+Mesmo que não disponhamos de informações *a priori* para avaliar se as simplificações assumidas pelos pressupostos são válidas para aproximarmos a distribuição condicional pelo modelo de regressão linear, o modelo ajustado pode ser verificado por meio de análises específicas que permitem diagnosticar a adequação razoável ou identificar desvios graves desse pressupostos. Mas antes de passar às questões de checagem de ajuste, vamos avaliar melhor os elementos principais de um modelo de regressão linear.
 
